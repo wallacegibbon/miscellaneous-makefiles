@@ -22,5 +22,5 @@ CROSS_C_ASM_INCLUDES = \
 -I$(LIB_PERIPHERAL_DIR)/inc \
 -I./src/screen-library-mcu/ch32v103 -I./src/screen-library-mcu -I./src \
 
-include ../miscellaneous-makefiles/mcu-common.mk
+include ../miscellaneous-makefiles/cross-gcc-mcu.mk
 

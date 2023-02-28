@@ -17,11 +17,10 @@ CROSS_LD_FLAGS = $(ARCH) -T$(CROSS_LINKER_SCRIPT) -nostartfiles \
 -Wl,--gc-sections -Wl,--no-relax -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref \
 
 CROSS_CC = "$(CROSS_COMPILER_PREFIX)gcc"
-CROSS_LD = "$(CROSS_COMPILER_PREFIX)gcc"
-CROSS_GDB = "$(CROSS_COMPILER_PREFIX)gdb"
 CROSS_OBJCOPY = "$(CROSS_COMPILER_PREFIX)objcopy"
 CROSS_OBJDUMP = "$(CROSS_COMPILER_PREFIX)objdump"
 CROSS_SIZE = "$(CROSS_COMPILER_PREFIX)size"
+CROSS_GDB = "$(CROSS_COMPILER_PREFIX)gdb"
 
 vpath %.c $(sort $(dir $(CROSS_C_SOURCE_FILES)))
 vpath %.S $(sort $(dir $(CROSS_ASM_SOURCE_FILES)))
@@ -40,7 +39,7 @@ $(BUILD_DIR)/%.S.o: %.S | $(BUILD_DIR)
 
 $(BUILD_DIR)/$(TARGET).elf: $(CROSS_OBJECTS)
 	@echo "\tLD $@ ..."
-	@$(CROSS_LD) $(CROSS_LD_FLAGS) -o $@ $^
+	@$(CROSS_CC) $(CROSS_LD_FLAGS) -o $@ $^
 	@$(CROSS_OBJDUMP) -S -D $@ > $@.lss
 	@echo
 	@echo "\tMemory Usage:"
