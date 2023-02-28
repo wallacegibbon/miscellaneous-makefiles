@@ -1,6 +1,7 @@
 ## Variables you have to define before including this makefile:
 ## CROSS_COMPILER_PREFIX, OPENOCD, OPENOCD_ARGS, TARGET, BUILD_DIR, ARCH,
-## CROSS_C_SOURCE_FILES, CROSS_ASM_SOURCE_FILES, CROSS_C_ASM_INCLUDES
+## CROSS_C_SOURCE_FILES, CROSS_ASM_SOURCE_FILES, CROSS_C_ASM_INCLUDES,
+## CROSS_LINKER_SCRIPT
 ##
 ## Variables you can define if you need:
 ## CUSTOM_C_ASM_FLAGS
@@ -11,7 +12,7 @@ CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_ASM_SOURCE_FILES:.S
 CROSS_C_ASM_FLAGS = $(ARCH) -W -g -Os -ffunction-sections -fdata-sections \
 -fno-common -fno-builtin $(CROSS_C_ASM_INCLUDES) $(CUSTOM_C_ASM_FLAGS) \
 
-CROSS_LD_FLAGS = $(ARCH) -T./link.ld -nostartfiles \
+CROSS_LD_FLAGS = $(ARCH) -T$(CROSS_LINKER_SCRIPT) -nostartfiles \
 -specs=nosys.specs -specs=nano.specs \
 -Wl,--gc-sections -Wl,--no-relax -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref \
 
