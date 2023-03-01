@@ -18,6 +18,8 @@ CROSS_C_SOURCE_FILES += $(wildcard ./src/*.c)
 
 CROSS_ASM_SOURCE_FILES = $(wildcard ./*.S)
 
+CROSS_LINKER_SCRIPT = ./link.ld
+
 CROSS_C_ASM_INCLUDES = \
 -I$(LIB_PERIPHERAL_DIR)/inc \
 -I./src/screen-library-mcu/ch32v10x -I./src/screen-library-mcu -I./src \
