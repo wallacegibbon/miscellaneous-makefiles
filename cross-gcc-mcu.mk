@@ -1,10 +1,9 @@
 ## Variables you have to define before including this makefile:
 ## CROSS_COMPILER_PREFIX, OPENOCD, OPENOCD_ARGS, TARGET, BUILD_DIR, ARCH,
-## CROSS_C_SOURCE_FILES, CROSS_ASM_SOURCE_FILES, CROSS_C_ASM_INCLUDES,
-## CROSS_LINKER_SCRIPT
+## CROSS_C_SOURCE_FILES, CROSS_ASM_SOURCE_FILES, CROSS_C_ASM_INCLUDES, CROSS_LINKER_SCRIPT
 ##
 ## Variables you can define if you need:
-## CUSTOM_C_ASM_FLAGS
+## CUSTOM_C_ASM_FLAGS CUSTOM_LD_FLAGS
 
 CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_C_SOURCE_FILES:.c=.c.o)))
 CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_ASM_SOURCE_FILES:.S=.S.o)))
@@ -13,7 +12,7 @@ CROSS_C_ASM_FLAGS = $(ARCH) -W -g -Os -ffunction-sections -fdata-sections \
 -fno-common -fno-builtin $(CROSS_C_ASM_INCLUDES) $(CUSTOM_C_ASM_FLAGS) \
 
 CROSS_LD_FLAGS = $(ARCH) -T$(CROSS_LINKER_SCRIPT) -nostartfiles \
--specs=nosys.specs -specs=nano.specs \
+-specs=nosys.specs -specs=nano.specs $(CUSTOM_LD_FLAGS) \
 -Wl,--gc-sections -Wl,--no-relax -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref \
 
 CROSS_CC = "$(CROSS_COMPILER_PREFIX)gcc"
@@ -24,6 +23,12 @@ CROSS_GDB = "$(CROSS_COMPILER_PREFIX)gdb"
 
 vpath %.c $(sort $(dir $(CROSS_C_SOURCE_FILES)))
 vpath %.S $(sort $(dir $(CROSS_ASM_SOURCE_FILES)))
+
+define show-size
+@echo "\n\tMemory Usage of the target:"
+@$(CROSS_SIZE) --format=SysV $(1)
+@echo
+endef
 
 .PHONY: all flash openocd debug clean
 
@@ -41,10 +46,7 @@ $(BUILD_DIR)/$(TARGET).elf: $(CROSS_OBJECTS)
 	@echo "\tLD $@ ..."
 	@$(CROSS_CC) $(CROSS_LD_FLAGS) -o $@ $^
 	@$(CROSS_OBJDUMP) -S -D $@ > $@.lss
-	@echo
-	@echo "\tMemory Usage:"
-	@$(CROSS_SIZE) $@
-	@echo
+	$(call show-size, $@)
 
 $(BUILD_DIR)/$(TARGET).hex: $(BUILD_DIR)/$(TARGET).elf
 	@echo "\tGenerating HEX file ..."
