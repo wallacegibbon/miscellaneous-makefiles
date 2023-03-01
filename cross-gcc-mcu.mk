@@ -26,7 +26,7 @@ vpath %.S $(sort $(dir $(CROSS_ASM_SOURCE_FILES)))
 
 define show-size
 @echo "\n\tMemory Usage of the target:\n"
-@$(CROSS_SIZE) --format=SysV $(1) | sed -e 's/\(.*\)/\t\1/'
+@$(CROSS_SIZE) --radix=16 --format=SysV $(1) | sed -e 's/\(.*\)/\t\1/'
 endef
 
 .PHONY: all flash openocd debug clean

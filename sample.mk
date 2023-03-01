@@ -16,13 +16,15 @@ CROSS_C_SOURCE_FILES += $(wildcard ./src/screen-library-mcu/*.c)
 CROSS_C_SOURCE_FILES += $(wildcard ./src/screen-library-mcu/ch32v10x/*.c)
 CROSS_C_SOURCE_FILES += $(wildcard ./src/*.c)
 
-CROSS_ASM_SOURCE_FILES = $(wildcard ./*.S)
+CROSS_ASM_SOURCE_FILES = $(wildcard ./src/*.S)
 
-CROSS_LINKER_SCRIPT = ./link.ld
+CROSS_LINKER_SCRIPT = ./src/ch32v103rbt6.ld
 
 CROSS_C_ASM_INCLUDES = \
 -I$(LIB_PERIPHERAL_DIR)/inc \
 -I./src/screen-library-mcu/ch32v10x -I./src/screen-library-mcu -I./src \
+
+CUSTOM_C_ASM_FLAGS = -DNDEBUG
 
 include ../miscellaneous-makefiles/cross-gcc-mcu.mk
 
