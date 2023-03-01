@@ -13,14 +13,14 @@ ARCH = -march=rv32imac -mabi=ilp32
 
 CROSS_C_SOURCE_FILES += $(wildcard $(LIB_PERIPHERAL_DIR)/src/*.c)
 CROSS_C_SOURCE_FILES += $(wildcard ./src/screen-library-mcu/*.c)
-CROSS_C_SOURCE_FILES += $(wildcard ./src/screen-library-mcu/ch32v103/*.c)
+CROSS_C_SOURCE_FILES += $(wildcard ./src/screen-library-mcu/ch32v10x/*.c)
 CROSS_C_SOURCE_FILES += $(wildcard ./src/*.c)
 
 CROSS_ASM_SOURCE_FILES = $(wildcard ./*.S)
 
 CROSS_C_ASM_INCLUDES = \
 -I$(LIB_PERIPHERAL_DIR)/inc \
--I./src/screen-library-mcu/ch32v103 -I./src/screen-library-mcu -I./src \
+-I./src/screen-library-mcu/ch32v10x -I./src/screen-library-mcu -I./src \
 
 include ../miscellaneous-makefiles/cross-gcc-mcu.mk
 
