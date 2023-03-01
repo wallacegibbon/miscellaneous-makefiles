@@ -7,7 +7,7 @@ OPENOCD_ARGS = -f "$(OPENOCD_PATH)/bin/wch-riscv.cfg"
 TARGET = target
 BUILD_DIR = build
 
-LIB_PERIPHERAL_DIR = $(HOME)/CH32_standard_peripheral_library/CH32V103
+LIB_PERIPHERAL_DIR = $(HOME)/CH32_standard_peripheral_library/ch32v10x
 ARCH = -march=rv32imac -mabi=ilp32
 #ARCH = -march=rv32ec -mabi=ilp32e
 
