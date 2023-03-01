@@ -1,5 +1,5 @@
 ## Variables you have to define before including this makefile:
-## CROSS_COMPILER_PREFIX, OPENOCD, OPENOCD_ARGS, TARGET, BUILD_DIR, ARCH,
+## CROSS_COMPILER_PREFIX, TARGET, BUILD_DIR, ARCH, OPENOCD, OPENOCD_ARGS,
 ## CROSS_C_SOURCE_FILES, CROSS_ASM_SOURCE_FILES, CROSS_C_ASM_INCLUDES, CROSS_LINKER_SCRIPT
 ##
 ## Variables you can define if you need:
@@ -12,8 +12,8 @@ CROSS_C_ASM_FLAGS = $(ARCH) -W -g -Os -ffunction-sections -fdata-sections \
 -fno-common -fno-builtin $(CROSS_C_ASM_INCLUDES) $(CUSTOM_C_ASM_FLAGS) \
 
 CROSS_LD_FLAGS = $(ARCH) -T$(CROSS_LINKER_SCRIPT) -nostartfiles \
--specs=nosys.specs -specs=nano.specs $(CUSTOM_LD_FLAGS) \
 -Wl,--gc-sections -Wl,--no-relax -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref \
+-specs=nosys.specs -specs=nano.specs $(CUSTOM_LD_FLAGS) \
 
 CROSS_CC = "$(CROSS_COMPILER_PREFIX)gcc"
 CROSS_OBJCOPY = "$(CROSS_COMPILER_PREFIX)objcopy"
@@ -25,9 +25,8 @@ vpath %.c $(sort $(dir $(CROSS_C_SOURCE_FILES)))
 vpath %.S $(sort $(dir $(CROSS_ASM_SOURCE_FILES)))
 
 define show-size
-@echo "\n\tMemory Usage of the target:"
-@$(CROSS_SIZE) --format=SysV $(1)
-@echo
+@echo "\n\tMemory Usage of the target:\n"
+@$(CROSS_SIZE) --format=SysV $(1) | sed -e 's/\(.*\)/\t\1/'
 endef
 
 .PHONY: all flash openocd debug clean
