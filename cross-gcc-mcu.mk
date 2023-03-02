@@ -21,7 +21,7 @@ CROSS_LD_FLAGS += $(ARCH) -T$(CROSS_LINKER_SCRIPT) -nostartfiles \
 -Wl,--gc-sections -Wl,--no-relax -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref \
 -specs=nosys.specs -specs=nano.specs \
 
-OPENOCD_FLASH_COMMANDS ?= -c "program $@ verify reset exit"
+OPENOCD_FLASH_COMMANDS ?= -c "program $< verify reset exit"
 GDB_INIT_COMMANDS ?= target extended-remote localhost:3333
 
 define show-size
@@ -66,7 +66,7 @@ debug: $(BUILD_DIR)/$(TARGET).elf
 	$(call gdb-connect, $<)
 
 flash: $(BUILD_DIR)/$(TARGET).hex
-	@$(OPENOCD) $(OPENOCD_ARGS) $(OPENOCD_FLASH_COMMANDS)
+	$(OPENOCD) $(OPENOCD_ARGS) $(OPENOCD_FLASH_COMMANDS)
 
 openocd:
 	@$(OPENOCD) $(OPENOCD_ARGS)
