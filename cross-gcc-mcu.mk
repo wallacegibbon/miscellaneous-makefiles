@@ -1,9 +1,24 @@
 ## Variables you have to define before including this makefile:
-## CROSS_COMPILER_PREFIX, TARGET, BUILD_DIR, ARCH, OPENOCD, OPENOCD_ARGS,
-## CROSS_C_SOURCE_FILES, CROSS_ASM_SOURCE_FILES, CROSS_C_ASM_INCLUDES, CROSS_LINKER_SCRIPT
+## CROSS_COMPILER_PREFIX, ARCH, OPENOCD, OPENOCD_ARGS, CROSS_LINKER_SCRIPT
+## CROSS_C_SOURCE_FILES, CROSS_ASM_SOURCE_FILES, CROSS_C_ASM_INCLUDES,
 
 CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_C_SOURCE_FILES:.c=.c.o)))
 CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_ASM_SOURCE_FILES:.S=.S.o)))
+
+vpath %.c $(sort $(dir $(CROSS_C_SOURCE_FILES)))
+vpath %.S $(sort $(dir $(CROSS_ASM_SOURCE_FILES)))
+
+OPENOCD_FLASH_COMMANDS ?= verify reset exit
+GDB_INIT_COMMANDS ?= target extended-remote localhost:3333
+
+CROSS_CC = "$(CROSS_COMPILER_PREFIX)gcc"
+CROSS_OBJCOPY = "$(CROSS_COMPILER_PREFIX)objcopy"
+CROSS_OBJDUMP = "$(CROSS_COMPILER_PREFIX)objdump"
+CROSS_SIZE = "$(CROSS_COMPILER_PREFIX)size"
+CROSS_GDB ?= "$(CROSS_COMPILER_PREFIX)gdb"
+
+BUILD_DIR ?= build
+TARGET ?= target
 
 CROSS_C_ASM_FLAGS += $(ARCH) -W -g -Os -ffunction-sections -fdata-sections \
 -fno-common -fno-builtin $(CROSS_C_ASM_INCLUDES) \
@@ -11,18 +26,6 @@ CROSS_C_ASM_FLAGS += $(ARCH) -W -g -Os -ffunction-sections -fdata-sections \
 CROSS_LD_FLAGS += $(ARCH) -T$(CROSS_LINKER_SCRIPT) -nostartfiles \
 -Wl,--gc-sections -Wl,--no-relax -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref \
 -specs=nosys.specs -specs=nano.specs \
-
-CROSS_CC = "$(CROSS_COMPILER_PREFIX)gcc"
-CROSS_OBJCOPY = "$(CROSS_COMPILER_PREFIX)objcopy"
-CROSS_OBJDUMP = "$(CROSS_COMPILER_PREFIX)objdump"
-CROSS_SIZE = "$(CROSS_COMPILER_PREFIX)size"
-CROSS_GDB = "$(CROSS_COMPILER_PREFIX)gdb"
-
-vpath %.c $(sort $(dir $(CROSS_C_SOURCE_FILES)))
-vpath %.S $(sort $(dir $(CROSS_ASM_SOURCE_FILES)))
-
-OPENOCD_FLASH_COMMANDS ?= verify reset exit
-GDB_INIT_COMMANDS ?= target extended-remote localhost:3333
 
 define show-size
 @echo "\n\tMemory Usage of the target:\n"
