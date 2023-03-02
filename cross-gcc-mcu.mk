@@ -5,12 +5,6 @@
 CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_C_SOURCE_FILES:.c=.c.o)))
 CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_ASM_SOURCE_FILES:.S=.S.o)))
 
-vpath %.c $(sort $(dir $(CROSS_C_SOURCE_FILES)))
-vpath %.S $(sort $(dir $(CROSS_ASM_SOURCE_FILES)))
-
-OPENOCD_FLASH_COMMANDS ?= verify reset exit
-GDB_INIT_COMMANDS ?= target extended-remote localhost:3333
-
 CROSS_CC = "$(CROSS_COMPILER_PREFIX)gcc"
 CROSS_OBJCOPY = "$(CROSS_COMPILER_PREFIX)objcopy"
 CROSS_OBJDUMP = "$(CROSS_COMPILER_PREFIX)objdump"
@@ -21,24 +15,30 @@ BUILD_DIR ?= build
 TARGET ?= target
 
 CROSS_C_ASM_FLAGS += $(ARCH) -W -g -Os -ffunction-sections -fdata-sections \
--fno-common -fno-builtin $(CROSS_C_ASM_INCLUDES) \
+-fno-common -fno-builtin -MMD -MP -MF"$(@:%.o=%.d)" $(CROSS_C_ASM_INCLUDES) \
 
 CROSS_LD_FLAGS += $(ARCH) -T$(CROSS_LINKER_SCRIPT) -nostartfiles \
 -Wl,--gc-sections -Wl,--no-relax -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref \
 -specs=nosys.specs -specs=nano.specs \
 
+OPENOCD_FLASH_COMMANDS ?= verify reset exit
+GDB_INIT_COMMANDS ?= target extended-remote localhost:3333
+
 define show-size
-@echo "\n\tMemory Usage of the target:\n"
-@$(CROSS_SIZE) --radix=16 --format=SysV $(1) | sed -e 's/\(.*\)/\t\1/'
+	@echo "\n\tMemory Usage of the target:\n"
+	@$(CROSS_SIZE) --radix=16 --format=SysV $(1) | sed -e 's/\(.*\)/\t\1/'
 endef
 
 define openocd-flash
-@$(OPENOCD) $(OPENOCD_ARGS) -c "program $(1) $(OPENOCD_FLASH_COMMANDS)"
+	@$(OPENOCD) $(OPENOCD_ARGS) -c "program $(1) $(OPENOCD_FLASH_COMMANDS)"
 endef
 
 define gdb-connect
-@$(CROSS_GDB) $(1) --eval-command="$(GDB_INIT_COMMANDS)"
+	@$(CROSS_GDB) $(1) --eval-command="$(GDB_INIT_COMMANDS)"
 endef
+
+vpath %.c $(sort $(dir $(CROSS_C_SOURCE_FILES)))
+vpath %.S $(sort $(dir $(CROSS_ASM_SOURCE_FILES)))
 
 .PHONY: all flash openocd debug clean
 
@@ -46,11 +46,11 @@ all: $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin
 
 $(BUILD_DIR)/%.c.o: %.c | $(BUILD_DIR)
 	@echo "\tCC $< ..."
-	@$(CROSS_CC) $(CROSS_C_ASM_FLAGS) -MMD -MF"$(@:%.o=%.d)" -c -o $@ $<
+	@$(CROSS_CC) $(CROSS_C_ASM_FLAGS) -c -o $@ $<
 
 $(BUILD_DIR)/%.S.o: %.S | $(BUILD_DIR)
 	@echo "\tAS $< ..."
-	@$(CROSS_CC) $(CROSS_C_ASM_FLAGS) -MMD -MF"$(@:%.o=%.d)" -c -o $@ $<
+	@$(CROSS_CC) $(CROSS_C_ASM_FLAGS) -c -o $@ $<
 
 $(BUILD_DIR)/$(TARGET).elf: $(CROSS_OBJECTS)
 	@echo "\tLD $@ ..."
