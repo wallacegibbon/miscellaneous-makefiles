@@ -1,19 +1,16 @@
 ## Variables you have to define before including this makefile:
 ## CROSS_COMPILER_PREFIX, TARGET, BUILD_DIR, ARCH, OPENOCD, OPENOCD_ARGS,
 ## CROSS_C_SOURCE_FILES, CROSS_ASM_SOURCE_FILES, CROSS_C_ASM_INCLUDES, CROSS_LINKER_SCRIPT
-##
-## Variables you can define if you need:
-## CUSTOM_C_ASM_FLAGS CUSTOM_LD_FLAGS
 
 CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_C_SOURCE_FILES:.c=.c.o)))
 CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_ASM_SOURCE_FILES:.S=.S.o)))
 
-CROSS_C_ASM_FLAGS = $(ARCH) -W -g -Os -ffunction-sections -fdata-sections \
--fno-common -fno-builtin $(CROSS_C_ASM_INCLUDES) $(CUSTOM_C_ASM_FLAGS) \
+CROSS_C_ASM_FLAGS += $(ARCH) -W -g -Os -ffunction-sections -fdata-sections \
+-fno-common -fno-builtin $(CROSS_C_ASM_INCLUDES) \
 
-CROSS_LD_FLAGS = $(ARCH) -T$(CROSS_LINKER_SCRIPT) -nostartfiles \
+CROSS_LD_FLAGS += $(ARCH) -T$(CROSS_LINKER_SCRIPT) -nostartfiles \
 -Wl,--gc-sections -Wl,--no-relax -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref \
--specs=nosys.specs -specs=nano.specs $(CUSTOM_LD_FLAGS) \
+-specs=nosys.specs -specs=nano.specs \
 
 CROSS_CC = "$(CROSS_COMPILER_PREFIX)gcc"
 CROSS_OBJCOPY = "$(CROSS_COMPILER_PREFIX)objcopy"
@@ -24,9 +21,20 @@ CROSS_GDB = "$(CROSS_COMPILER_PREFIX)gdb"
 vpath %.c $(sort $(dir $(CROSS_C_SOURCE_FILES)))
 vpath %.S $(sort $(dir $(CROSS_ASM_SOURCE_FILES)))
 
+OPENOCD_FLASH_COMMANDS ?= verify reset exit
+GDB_INIT_COMMANDS ?= target extended-remote localhost:3333
+
 define show-size
 @echo "\n\tMemory Usage of the target:\n"
 @$(CROSS_SIZE) --radix=16 --format=SysV $(1) | sed -e 's/\(.*\)/\t\1/'
+endef
+
+define openocd-flash
+@$(OPENOCD) $(OPENOCD_ARGS) -c "program $(1) $(OPENOCD_FLASH_COMMANDS)"
+endef
+
+define gdb-connect
+@$(CROSS_GDB) $(1) --eval-command="$(GDB_INIT_COMMANDS)"
 endef
 
 .PHONY: all flash openocd debug clean
@@ -59,15 +67,13 @@ $(BUILD_DIR):
 	@mkdir $@
 
 flash:
-	@$(OPENOCD) $(OPENOCD_ARGS) \
-		-c "program $(BUILD_DIR)/$(TARGET).hex verify reset exit"
+	$(call openocd-flash, $(BUILD_DIR)/$(TARGET).hex)
 
 openocd:
 	@$(OPENOCD) $(OPENOCD_ARGS)
 
 debug:
-	@$(CROSS_GDB) $(BUILD_DIR)/$(TARGET).elf \
-		--eval-command="target extended-remote localhost:3333"
+	$(call gdb-connect, $(BUILD_DIR)/$(TARGET).elf)
 
 clean:
 	@rm -rf $(BUILD_DIR)

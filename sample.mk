@@ -3,7 +3,6 @@ OPENOCD_PATH = $(HOME)/MRS_Toolchain_Linux_x64_V1.60/OpenOCD
 OPENOCD = "$(OPENOCD_PATH)/bin/openocd"
 OPENOCD_ARGS = -f "$(OPENOCD_PATH)/bin/wch-riscv.cfg"
 
-## To change target name: `TARGET=xxx make`(unix only) or `make TARGET=xxx`
 TARGET = target
 BUILD_DIR = build
 
@@ -24,7 +23,9 @@ CROSS_C_ASM_INCLUDES = \
 -I$(LIB_PERIPHERAL_DIR)/inc \
 -I./src/screen-library-mcu/ch32v10x -I./src/screen-library-mcu -I./src \
 
-CUSTOM_C_ASM_FLAGS = -DNDEBUG
+OPENOCD_FLASH_COMMANDS = verify wlink_reset_resume resume exit
 
 include ../miscellaneous-makefiles/cross-gcc-mcu.mk
+
+CROSS_C_ASM_FLAGS += -DNDEBUG
 
