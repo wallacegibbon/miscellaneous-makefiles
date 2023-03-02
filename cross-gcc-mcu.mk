@@ -21,16 +21,12 @@ CROSS_LD_FLAGS += $(ARCH) -T$(CROSS_LINKER_SCRIPT) -nostartfiles \
 -Wl,--gc-sections -Wl,--no-relax -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref \
 -specs=nosys.specs -specs=nano.specs \
 
-OPENOCD_FLASH_COMMANDS ?= verify reset exit
+OPENOCD_FLASH_COMMANDS ?= -c "program $@ verify reset exit"
 GDB_INIT_COMMANDS ?= target extended-remote localhost:3333
 
 define show-size
 	@echo "\n\tMemory Usage of the target:\n"
 	@$(CROSS_SIZE) --radix=16 --format=SysV $(1) | sed -e 's/\(.*\)/\t\1/'
-endef
-
-define openocd-flash
-	@$(OPENOCD) $(OPENOCD_ARGS) -c "program $(1) $(OPENOCD_FLASH_COMMANDS)"
 endef
 
 define gdb-connect
@@ -40,7 +36,7 @@ endef
 vpath %.c $(sort $(dir $(CROSS_C_SOURCE_FILES)))
 vpath %.S $(sort $(dir $(CROSS_ASM_SOURCE_FILES)))
 
-.PHONY: all flash openocd debug clean
+.PHONY: all clean openocd
 
 all: $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin
 
@@ -66,17 +62,17 @@ $(BUILD_DIR)/$(TARGET).bin: $(BUILD_DIR)/$(TARGET).elf
 	@echo "\tGenerating BIN file ..."
 	@$(CROSS_OBJCOPY) -Obinary $< $@
 
-$(BUILD_DIR):
-	@mkdir $@
+debug: $(BUILD_DIR)/$(TARGET).elf
+	$(call gdb-connect, $<)
 
-flash:
-	$(call openocd-flash, $(BUILD_DIR)/$(TARGET).hex)
+flash: $(BUILD_DIR)/$(TARGET).hex
+	@$(OPENOCD) $(OPENOCD_ARGS) $(OPENOCD_FLASH_COMMANDS)
 
 openocd:
 	@$(OPENOCD) $(OPENOCD_ARGS)
 
-debug:
-	$(call gdb-connect, $(BUILD_DIR)/$(TARGET).elf)
+$(BUILD_DIR):
+	@mkdir $@
 
 clean:
 	@rm -rf $(BUILD_DIR)
