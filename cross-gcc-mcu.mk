@@ -36,7 +36,7 @@ endef
 vpath %.c $(sort $(dir $(CROSS_C_SOURCE_FILES)))
 vpath %.S $(sort $(dir $(CROSS_ASM_SOURCE_FILES)))
 
-.PHONY: all clean openocd
+.PHONY: all clean debug flash openocd
 
 all: $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin
 
@@ -62,6 +62,12 @@ $(BUILD_DIR)/$(TARGET).bin: $(BUILD_DIR)/$(TARGET).elf
 	@echo "\tGenerating BIN file ..."
 	@$(CROSS_OBJCOPY) -Obinary $< $@
 
+$(BUILD_DIR):
+	@mkdir $@
+
+clean:
+	@rm -rf $(BUILD_DIR)
+
 debug: $(BUILD_DIR)/$(TARGET).elf
 	$(call gdb-connect, $<)
 
@@ -70,12 +76,6 @@ flash: $(BUILD_DIR)/$(TARGET).hex
 
 openocd:
 	@$(OPENOCD) $(OPENOCD_ARGS)
-
-$(BUILD_DIR):
-	@mkdir $@
-
-clean:
-	@rm -rf $(BUILD_DIR)
 
 -include $(wildcard $(BUILD_DIR)/*.d)
 
