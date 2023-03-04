@@ -1,18 +1,14 @@
-## Variables you have to define before including this makefile:
-## CROSS_COMPILER_PREFIX, ARCH, OPENOCD, OPENOCD_ARGS, CROSS_LINKER_SCRIPT,
-## CROSS_C_SOURCE_FILES, CROSS_ASM_SOURCE_FILES, CROSS_C_ASM_INCLUDES
-
 CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_C_SOURCE_FILES:.c=.c.o)))
 CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_ASM_SOURCE_FILES:.S=.S.o)))
+
+OPENOCD_FLASH_COMMANDS ?= -c "program $< verify reset exit"
+GDB_INIT_COMMANDS ?= target extended-remote localhost:3333
 
 CROSS_CC = "$(CROSS_COMPILER_PREFIX)gcc"
 CROSS_OBJCOPY = "$(CROSS_COMPILER_PREFIX)objcopy"
 CROSS_OBJDUMP = "$(CROSS_COMPILER_PREFIX)objdump"
 CROSS_SIZE = "$(CROSS_COMPILER_PREFIX)size"
 CROSS_GDB ?= "$(CROSS_COMPILER_PREFIX)gdb"
-
-OPENOCD_FLASH_COMMANDS ?= -c "program $< verify reset exit"
-GDB_INIT_COMMANDS ?= target extended-remote localhost:3333
 
 BUILD_DIR ?= build
 TARGET ?= target
@@ -44,7 +40,7 @@ $(BUILD_DIR)/%.S.o: %.S | $(BUILD_DIR)
 	@$(CROSS_CC) $(CROSS_C_ASM_FLAGS) -c -o $@ $<
 
 $(BUILD_DIR)/$(TARGET).elf: $(CROSS_OBJECTS)
-	@echo "\tLD $@ ..."
+	@echo "\tLinking to $@ ..."
 	@$(CROSS_CC) $(CROSS_LD_FLAGS) -o $@ $^
 	@$(CROSS_OBJDUMP) -S -D $@ > $@.lss
 	$(call SHOW_SIZE, $@)
@@ -67,7 +63,7 @@ debug: $(BUILD_DIR)/$(TARGET).elf
 	@$(CROSS_GDB) $< --eval-command="$(GDB_INIT_COMMANDS)"
 
 flash: $(BUILD_DIR)/$(TARGET).hex
-	$(OPENOCD) $(OPENOCD_ARGS) $(OPENOCD_FLASH_COMMANDS)
+	@$(OPENOCD) $(OPENOCD_ARGS) $(OPENOCD_FLASH_COMMANDS)
 
 openocd:
 	@$(OPENOCD) $(OPENOCD_ARGS)

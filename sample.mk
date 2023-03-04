@@ -20,7 +20,8 @@ CROSS_C_ASM_INCLUDES = \
 -I$(LIB_PERIPHERAL_DIR)/inc \
 -I./src/screen-library-mcu/ch32v10x -I./src/screen-library-mcu -I./src \
 
-OPENOCD_FLASH_COMMANDS = -c "program $< verify wlink_reset_resume resume exit"
+OPENOCD_FLASH_COMMANDS = \
+-c "program $< verify" -c wlink_reset_resume -c resume -c exit
 
 CROSS_C_ASM_FLAGS += -DNDEBUG
 
