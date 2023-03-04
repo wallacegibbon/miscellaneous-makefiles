@@ -40,17 +40,17 @@ $(BUILD_DIR)/%.S.o: %.S | $(BUILD_DIR)
 	@$(CROSS_CC) $(CROSS_C_ASM_FLAGS) -c -o $@ $<
 
 $(BUILD_DIR)/$(TARGET).elf: $(CROSS_OBJECTS)
-	@echo "\tLinking to $@ ..."
+	@echo "\n\tLinking to $@ ..."
 	@$(CROSS_CC) $(CROSS_LD_FLAGS) -o $@ $^
 	@$(CROSS_OBJDUMP) -S -D $@ > $@.lss
 	$(call SHOW_SIZE, $@)
 
 $(BUILD_DIR)/$(TARGET).hex: $(BUILD_DIR)/$(TARGET).elf
-	@echo "\tGenerating HEX file ..."
+	@echo "\tGenerating HEX file $@ ..."
 	@$(CROSS_OBJCOPY) -Oihex $< $@
 
 $(BUILD_DIR)/$(TARGET).bin: $(BUILD_DIR)/$(TARGET).elf
-	@echo "\tGenerating BIN file ..."
+	@echo "\tGenerating BIN file $@ ..."
 	@$(CROSS_OBJCOPY) -Obinary $< $@
 
 $(BUILD_DIR):

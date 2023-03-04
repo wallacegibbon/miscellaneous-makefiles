@@ -2,10 +2,13 @@ CROSS_COMPILER_PREFIX = $(HOME)/MRS_Toolchain_Linux_x64_V1.60/RISC-V Embedded GC
 OPENOCD_PATH = $(HOME)/MRS_Toolchain_Linux_x64_V1.60/OpenOCD
 OPENOCD = "$(OPENOCD_PATH)/bin/openocd"
 OPENOCD_ARGS = -f "$(OPENOCD_PATH)/bin/wch-riscv.cfg"
+#OPENOCD = /usr/local/bin/openocd
+#OPENOCD_ARGS = -f interface/wlink.cfg -f target/wch-riscv.cfg
 
-LIB_PERIPHERAL_DIR = $(HOME)/CH32_standard_peripheral_library/ch32v10x
 ARCH = -march=rv32imac -mabi=ilp32
 #ARCH = -march=rv32ec -mabi=ilp32e
+
+LIB_PERIPHERAL_DIR = $(HOME)/CH32_standard_peripheral_library/ch32v10x
 
 CROSS_C_SOURCE_FILES += $(wildcard $(LIB_PERIPHERAL_DIR)/src/*.c)
 CROSS_C_SOURCE_FILES += $(wildcard ./src/screen-library-mcu/*.c)
