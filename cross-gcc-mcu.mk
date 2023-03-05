@@ -13,8 +13,8 @@ CROSS_GDB ?= "$(CROSS_COMPILER_PREFIX)gdb"
 BUILD_DIR ?= build
 TARGET ?= target
 
-CROSS_C_ASM_FLAGS += $(ARCH) -W -g -Os -ffunction-sections -fdata-sections \
--fno-common -fno-builtin -MMD -MP -MF"$(@:%.o=%.d)" $(CROSS_C_ASM_INCLUDES) \
+CROSS_C_FLAGS += $(ARCH) -W -g -Os -ffunction-sections -fdata-sections \
+-fno-common -fno-builtin -MMD -MP -MF"$(@:%.o=%.d)" $(CROSS_C_INCLUDES) \
 
 CROSS_LD_FLAGS += $(ARCH) -T$(CROSS_LINKER_SCRIPT) -nostartfiles \
 -Wl,--gc-sections -Wl,--no-relax -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref \
@@ -33,11 +33,11 @@ all: $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin
 
 $(BUILD_DIR)/%.c.o: %.c | $(BUILD_DIR)
 	@echo "\tCC $< ..."
-	@$(CROSS_CC) $(CROSS_C_ASM_FLAGS) -c -o $@ $<
+	@$(CROSS_CC) $(CROSS_C_FLAGS) -c -o $@ $<
 
 $(BUILD_DIR)/%.S.o: %.S | $(BUILD_DIR)
 	@echo "\tAS $< ..."
-	@$(CROSS_CC) $(CROSS_C_ASM_FLAGS) -c -o $@ $<
+	@$(CROSS_CC) $(CROSS_C_FLAGS) -c -o $@ $<
 
 $(BUILD_DIR)/$(TARGET).elf: $(CROSS_OBJECTS)
 	@echo "\n\tLinking to $@ ..."
