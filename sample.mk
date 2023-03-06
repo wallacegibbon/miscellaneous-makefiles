@@ -9,22 +9,17 @@ CH32_STD_LIB_DIR = $(HOME)/playground/CH32_standard_library/ch32v10x
 
 CROSS_C_SOURCE_FILES += $(wildcard $(CH32_STD_LIB_DIR)/peripheral/src/*.c)
 CROSS_C_SOURCE_FILES += $(wildcard $(CH32_STD_LIB_DIR)/core/*.c)
-CROSS_C_SOURCE_FILES += $(wildcard $(CH32_STD_LIB_DIR)/util/*.c)
 CROSS_C_SOURCE_FILES += $(wildcard ./src/screen-library-mcu/*.c)
 CROSS_C_SOURCE_FILES += $(wildcard ./src/screen-library-mcu/ch32v10x/*.c)
 CROSS_C_SOURCE_FILES += $(wildcard ./src/*.c)
 
-CROSS_ASM_SOURCE_FILES = $(wildcard ./src/*.S)
+CROSS_ASM_SOURCE_FILES += $(CH32_STD_LIB_DIR)/sample/startup.S
 
-CROSS_LINKER_SCRIPT = ./src/default.ld
+CROSS_LINKER_SCRIPT = $(CH32_STD_LIB_DIR)/sample/default.ld
 
 CROSS_C_INCLUDES = \
--I$(CH32_STD_LIB_DIR)/peripheral/inc \
--I$(CH32_STD_LIB_DIR)/core \
--I$(CH32_STD_LIB_DIR)/util \
--I./src/screen-library-mcu/ch32v10x \
--I./src/screen-library-mcu \
--I./src \
+-I$(CH32_STD_LIB_DIR)/peripheral/inc -I$(CH32_STD_LIB_DIR)/core \
+-I./src/screen-library-mcu/ch32v10x -I./src/screen-library-mcu -I./src \
 
 OPENOCD_FLASH_COMMANDS = \
 -c "program $<" -c wlink_reset_resume -c exit
