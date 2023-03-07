@@ -5,7 +5,7 @@ OPENOCD_ARGS = -f interface/wlink.cfg -f target/wch-riscv.cfg
 ARCH = -march=rv32imac -mabi=ilp32
 #ARCH = -march=rv32ec -mabi=ilp32e
 
-CH32_STD_LIB_DIR = $(HOME)/playground/CH32_standard_library/ch32v10x
+CH32_STD_LIB_DIR = $(HOME)/playground/ch32-standard-library/ch32v10x
 
 CROSS_C_SOURCE_FILES += $(wildcard $(CH32_STD_LIB_DIR)/peripheral/src/*.c)
 CROSS_C_SOURCE_FILES += $(wildcard $(CH32_STD_LIB_DIR)/core/*.c)
