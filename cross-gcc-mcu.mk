@@ -1,3 +1,9 @@
+## This makefile is not perfect. A link error is raised when 2 (or more) C files
+## have the same name. (some `.o` files override others in such case)
+## Removing the `$(notdir ...)` and use `mkdir -p` can solve some problems,
+## but it will bring you the relative path problem: the build file can go out
+## of $(BUILD_DIR) because of `..` in path.
+
 CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_C_SOURCE_FILES:.c=.c.o)))
 CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_ASM_SOURCE_FILES:.S=.S.o)))
 
@@ -68,5 +74,5 @@ flash: $(BUILD_DIR)/$(TARGET).hex
 openocd:
 	@$(OPENOCD) $(OPENOCD_ARGS)
 
--include $(wildcard $(BUILD_DIR)/*.d)
+-include $(CROSS_OBJECTS:.o=.d)
 
