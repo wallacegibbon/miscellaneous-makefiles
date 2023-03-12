@@ -18,8 +18,8 @@ CROSS_ASM_SOURCE_FILES += $(CH32_STD_LIB_DIR)/sample/startup.S
 CROSS_LINKER_SCRIPT = $(CH32_STD_LIB_DIR)/sample/default.ld
 
 CROSS_C_INCLUDES = \
--I$(CH32_STD_LIB_DIR)/peripheral/inc -I$(CH32_STD_LIB_DIR)/core \
--I./src/screen-library-mcu/ch32v10x -I./src/screen-library-mcu -I./src \
+$(CH32_STD_LIB_DIR)/peripheral/inc $(CH32_STD_LIB_DIR)/core \
+./src/screen-library-mcu/ch32v10x ./src/screen-library-mcu ./src \
 
 OPENOCD_FLASH_COMMANDS = \
 -c "program $<" -c wlink_reset_resume -c exit
