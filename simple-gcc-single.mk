@@ -10,15 +10,15 @@ LD_FLAGS +=
 
 vpath %.c $(sort $(dir $(C_SOURCE_FILES)))
 
-.PHONY: all install clean
+.PHONY: all clean
 
 all: $(BUILD_DIR)/$(TARGET)
 
 $(BUILD_DIR)/%.c.o: %.c | $(BUILD_DIR)
-	$(CC) $(C_FLAGS) -o $@ -c $<
+	$(CC) -o $@ -c $< $(C_FLAGS)
 
 $(BUILD_DIR)/$(TARGET): $(OBJECTS)
-	$(CC) $(LD_FLAGS) -o $@ $^
+	$(CC) -o $@ $^ $(LD_FLAGS)
 
 $(BUILD_DIR):
 	mkdir $@

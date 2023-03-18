@@ -35,13 +35,13 @@ vpath %.S $(sort $(dir $(CROSS_ASM_SOURCE_FILES)))
 all: $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin target_detail
 
 $(BUILD_DIR)/%.c.o: %.c | $(BUILD_DIR)
-	$(CROSS_CC) $(CROSS_C_FLAGS) -c -o $@ $<
+	$(CROSS_CC) -c -o $@ $< $(CROSS_C_FLAGS)
 
 $(BUILD_DIR)/%.S.o: %.S | $(BUILD_DIR)
-	$(CROSS_CC) $(CROSS_C_FLAGS) -c -o $@ $<
+	$(CROSS_CC) -c -o $@ $< $(CROSS_C_FLAGS)
 
 $(BUILD_DIR)/$(TARGET).elf: $(CROSS_OBJECTS)
-	$(CROSS_CC) $(CROSS_LD_FLAGS) -o $@ $^
+	$(CROSS_CC) -o $@ $^ $(CROSS_LD_FLAGS)
 
 $(BUILD_DIR)/$(TARGET).hex: $(BUILD_DIR)/$(TARGET).elf
 	$(CROSS_OBJCOPY) -Oihex $< $@
