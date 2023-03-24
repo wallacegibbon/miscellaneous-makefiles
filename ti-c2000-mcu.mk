@@ -22,7 +22,7 @@ vpath %.asm $(sort $(dir $(ASM_SOURCE_FILES)))
 
 .PHONY: all clean dependents
 
-all: $(BUILD_DIR)/$(TARGET).out
+all: $(BUILD_DIR)/$(TARGET).hex
 
 $(BUILD_DIR)/%.c.obj: %.c | $(BUILD_DIR)
 	$(CL2000) -c --output_file $@ $< $(C_FLAGS)
