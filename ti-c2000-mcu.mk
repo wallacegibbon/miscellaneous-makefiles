@@ -14,7 +14,7 @@ $(addprefix -I, $(C_INCLUDES)) \
 
 LINK_MODEL ?= --rom_model
 
-LINKER_FLAGS += $(ARCH) --run-linker $(LINK_MODEL) \
+LINKER_FLAGS += $(ARCH) --run_linker $(LINK_MODEL) \
 --stack_size=0x300 --warn_sections -m"$@.map" \
 
 vpath %.c $(sort $(dir $(C_SOURCE_FILES)))
@@ -42,5 +42,5 @@ $(BUILD_DIR):
 clean:
 	rm -rf $(BUILD_DIR)
 
--include $(OBJECTS:.o=.d)
+-include $(OBJECTS:.obj=.d)
 
