@@ -7,15 +7,19 @@ HEX2000 = "$(C2000_TOOL_ROOT)/bin/hex2000"
 BUILD_DIR ?= build
 TARGET ?= target
 
-C_FLAGS += $(ARCH) -Ooff -g --preproc_with_compile \
---diag_warning=225 --display_error_number --diag_wrap=off \
+C_INCLUDES += $(C2000_TOOL_ROOT)/include
+
+C_FLAGS += $(ARCH) -Ooff --preproc_with_compile --abi=coffabi \
+--diag_warning=225 --diag_wrap=off --display_error_number \
+--printf_support=full \
 --preproc_dependency="$(@:%.obj=%.d)" \
 $(addprefix -I, $(C_INCLUDES)) \
 
-LINK_MODEL ?= --rom_model
-
-LINKER_FLAGS += $(ARCH) --run_linker $(LINK_MODEL) \
---stack_size=0x300 --warn_sections -m"$@.map" \
+LINKER_FLAGS += $(ARCH) --abi=coffabi -z \
+--diag_warning=225 --diag_wrap=off --display_error_number --reread_libs \
+-i$(C2000_TOOL_ROOT)/lib -i$(C2000_TOOL_ROOT)/include \
+--heap_size=0x400 --stack_size=0x400 --printf_support=full \
+--warn_sections -m"$@.map" --rom_model -llibc.a \
 
 vpath %.c $(sort $(dir $(C_SOURCE_FILES)))
 vpath %.asm $(sort $(dir $(ASM_SOURCE_FILES)))
@@ -31,10 +35,11 @@ $(BUILD_DIR)/%.asm.obj: %.asm | $(BUILD_DIR)
 	$(CL2000) -c --output_file $@ $< $(C_FLAGS)
 
 $(BUILD_DIR)/$(TARGET).out: $(OBJECTS) $(LINKER_SCRIPTS)
-	$(CL2000) -o $@ $^ $(LINKER_FLAGS)
+	$(CL2000) --run_linker -o $@ $^ $(LINKER_FLAGS)
 
 $(BUILD_DIR)/$(TARGET).hex: $(BUILD_DIR)/$(TARGET).out
-	$(HEX2000) -o $@ @< --memwidth=16 --romwidth=16 --intel
+	$(HEX2000) --memwidth 16 --romwidth 16 --intel -o $@ $<
+	rm $(TARGET).i*
 
 $(BUILD_DIR):
 	mkdir $@
