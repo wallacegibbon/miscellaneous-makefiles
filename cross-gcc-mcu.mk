@@ -19,13 +19,11 @@ CROSS_GDB ?= "$(CROSS_COMPILER_PREFIX)gdb"
 BUILD_DIR ?= build
 TARGET ?= target
 
-CROSS_C_FLAGS += $(ARCH) -W -g -Os -ffunction-sections -fdata-sections \
--fno-common -fno-builtin -MMD -MP -MF"$(@:%.o=%.d)" \
+CROSS_C_FLAGS += $(ARCH) -W -g -ffunction-sections -fdata-sections -MMD -MP -MF"$(@:%.o=%.d)" \
 $(addprefix -I, $(CROSS_C_INCLUDES)) \
 
 CROSS_LD_FLAGS += $(ARCH) -T$(CROSS_LINKER_SCRIPT) -nostartfiles \
--Wl,--gc-sections -Wl,--no-relax -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref \
--specs=nosys.specs -specs=nano.specs \
+-Wl,--gc-sections -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref \
 
 vpath %.c $(sort $(dir $(CROSS_C_SOURCE_FILES)))
 vpath %.S $(sort $(dir $(CROSS_ASM_SOURCE_FILES)))
