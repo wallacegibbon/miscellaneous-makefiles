@@ -20,10 +20,9 @@ BUILD_DIR ?= build
 TARGET ?= target
 
 CROSS_C_FLAGS += $(ARCH) -W -g -ffunction-sections -fdata-sections -MMD -MP -MF"$(@:%.o=%.d)" \
-$(addprefix -I, $(CROSS_C_INCLUDES)) \
+$(addprefix -I, $(CROSS_C_INCLUDES))
 
-CROSS_LD_FLAGS += $(ARCH) -T$(CROSS_LINKER_SCRIPT) -nostartfiles \
--Wl,--gc-sections -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref \
+CROSS_LD_FLAGS += $(ARCH) -Wl,--gc-sections -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref
 
 vpath %.c $(sort $(dir $(CROSS_C_SOURCE_FILES)))
 vpath %.S $(sort $(dir $(CROSS_ASM_SOURCE_FILES)))
