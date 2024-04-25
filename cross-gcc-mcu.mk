@@ -19,7 +19,8 @@ CROSS_GDB ?= "$(CROSS_COMPILER_PREFIX)gdb"
 BUILD_DIR ?= build
 TARGET ?= target
 
-CROSS_C_FLAGS += $(ARCH) -W -g -ffunction-sections -fdata-sections -MMD -MP -MF"$(@:%.o=%.d)" \
+CROSS_C_FLAGS += $(ARCH) -Wall -Wextra -Wno-unused -g \
+-ffunction-sections -fdata-sections -MMD -MP -MF"$(@:%.o=%.d)" \
 $(addprefix -I, $(CROSS_C_INCLUDES))
 
 CROSS_LD_FLAGS += $(ARCH) -Wl,--gc-sections -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref
@@ -32,29 +33,37 @@ vpath %.S $(sort $(dir $(CROSS_ASM_SOURCE_FILES)))
 all: $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin target_detail
 
 $(BUILD_DIR)/%.c.o: %.c | $(BUILD_DIR)
-	$(CROSS_CC) -c -o $@ $< $(CROSS_C_FLAGS)
+	@echo -e "\tcompiling $< ..."
+	@$(CROSS_CC) -c -o $@ $< $(CROSS_C_FLAGS)
 
 $(BUILD_DIR)/%.S.o: %.S | $(BUILD_DIR)
-	$(CROSS_CC) -c -o $@ $< $(CROSS_C_FLAGS)
+	@echo -e "\tcompiling $< ..."
+	@$(CROSS_CC) -c -o $@ $< $(CROSS_C_FLAGS)
 
 $(BUILD_DIR)/$(TARGET).elf: $(CROSS_OBJECTS)
-	$(CROSS_CC) -o $@ $^ $(CROSS_LD_FLAGS)
+	@echo -e "\tlinking $@ ..."
+	@$(CROSS_CC) -o $@ $^ $(CROSS_LD_FLAGS)
 
 $(BUILD_DIR)/$(TARGET).hex: $(BUILD_DIR)/$(TARGET).elf
-	$(CROSS_OBJCOPY) -Oihex $< $@
+	@echo -e "\tgenerating $@ ..."
+	@$(CROSS_OBJCOPY) -Oihex $< $@
 
 $(BUILD_DIR)/$(TARGET).bin: $(BUILD_DIR)/$(TARGET).elf
-	$(CROSS_OBJCOPY) -Obinary $< $@
+	@echo -e "\tgenerating $@ ..."
+	@$(CROSS_OBJCOPY) -Obinary $< $@
 
 $(BUILD_DIR):
 	mkdir $@
 
 target_detail: $(BUILD_DIR)/$(TARGET).elf
-	$(CROSS_OBJDUMP) -S -D $< > $<.lss
-	$(CROSS_SIZE) --radix=16 --format=SysV $<
+	@echo -e "\n\tsize of the target\n"
+	@$(CROSS_OBJDUMP) -S -D $< > $<.lss
+	@#$(CROSS_SIZE) --radix=16 --format=BSD $<
+	@$(CROSS_SIZE) --radix=16 --format=SysV $<
+	@echo -e "\n\tdone."
 
 clean:
-	rm -rf $(BUILD_DIR)
+	@rm -rf $(BUILD_DIR)
 
 debug: $(BUILD_DIR)/$(TARGET).elf
 	$(CROSS_GDB) $< --eval-command="$(GDB_INIT_COMMANDS)"
