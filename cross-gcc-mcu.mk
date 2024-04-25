@@ -1,14 +1,11 @@
-## This makefile is not perfect. A link error is raised when 2 (or more) C files
-## have the same name. (some `.o` files override others in such case)
-## Removing the `$(notdir ...)` and use `mkdir -p` can solve some problems,
-## but it will bring you the relative path problem: the build file can go out
-## of $(BUILD_DIR) because of `..` in path.
-
 CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_C_SOURCE_FILES:.c=.c.o)))
 CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_ASM_SOURCE_FILES:.S=.S.o)))
 
-OPENOCD_FLASH_COMMANDS ?= -c "program $< verify reset exit"
-GDB_INIT_COMMANDS ?= target extended-remote localhost:3333
+CROSS_C_FLAGS += $(ARCH) -Wall -Wextra -Wno-unused -g -ffunction-sections -fdata-sections \
+-Wp,-MMD,-MT"$@",-MF"$(@:%.o=%.d)",-MP \
+$(addprefix -I, $(CROSS_C_INCLUDES))
+
+CROSS_LD_FLAGS += $(ARCH) -Wl,--gc-sections -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref
 
 CROSS_CC = "$(CROSS_COMPILER_PREFIX)gcc"
 CROSS_OBJCOPY = "$(CROSS_COMPILER_PREFIX)objcopy"
@@ -16,15 +13,11 @@ CROSS_OBJDUMP = "$(CROSS_COMPILER_PREFIX)objdump"
 CROSS_SIZE = "$(CROSS_COMPILER_PREFIX)size"
 CROSS_GDB ?= "$(CROSS_COMPILER_PREFIX)gdb"
 
+OPENOCD_FLASH_COMMANDS ?= -c "program $< verify reset exit"
+GDB_INIT_COMMANDS ?= target extended-remote localhost:3333
+
 BUILD_DIR ?= build
 TARGET ?= target
-
-## -MF"$(@:%.o=%.d)" is not necessary since `.c.d` is the default suffix in your current configuration.
-CROSS_C_FLAGS += $(ARCH) -Wall -Wextra -Wno-unused -g \
--ffunction-sections -fdata-sections -MMD -MP \
-$(addprefix -I, $(CROSS_C_INCLUDES))
-
-CROSS_LD_FLAGS += $(ARCH) -Wl,--gc-sections -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref
 
 vpath %.c $(sort $(dir $(CROSS_C_SOURCE_FILES)))
 vpath %.S $(sort $(dir $(CROSS_ASM_SOURCE_FILES)))

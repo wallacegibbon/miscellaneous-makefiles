@@ -1,18 +1,17 @@
 CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_C_SOURCE_FILES:.c=.c.rel)))
 CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_ASM_SOURCE_FILES:.asm=.asm.rel)))
 
+CROSS_C_FLAGS += -mmcs51 --disable-warning 283 \
+-Wp,-MMD,-MT"$@",-MF"$(@:%.rel=%.d)",-MP \
+$(addprefix -I, $(CROSS_C_INCLUDES))
+
+CROSS_LD_FLAGS += -mmcs51
+
 CROSS_CC = "$(CROSS_COMPILER_PREFIX)sdcc"
 PACKIHX = "$(CROSS_COMPILER_PREFIX)packihx"
 
 BUILD_DIR ?= build
 TARGET ?= target
-
-## You need to use `-MT` to change the default target name to `.rel` from `.o`
-## (Since SDCC use a modified preprocessor of GCC)
-CROSS_C_FLAGS += -mmcs51 -Wp,-MM,-MT"$@",-MF"$(@:%.rel=%.d)",-MP \
-$(addprefix -I, $(CROSS_C_INCLUDES))
-
-CROSS_LD_FLAGS += -mmcs51
 
 vpath %.c $(sort $(dir $(CROSS_C_SOURCE_FILES)))
 vpath %.asm $(sort $(dir $(CROSS_ASM_SOURCE_FILES)))
