@@ -8,6 +8,7 @@ $(addprefix -I, $(CROSS_C_INCLUDES))
 CROSS_LD_FLAGS += -mmcs51
 
 CROSS_CC = "$(CROSS_COMPILER_PREFIX)sdcc"
+CROSS_AS = "$(CROSS_COMPILER_PREFIX)sdas8051"
 PACKIHX = "$(CROSS_COMPILER_PREFIX)packihx"
 
 BUILD_DIR ?= build
@@ -26,7 +27,7 @@ $(BUILD_DIR)/%.c.rel: %.c | $(BUILD_DIR)
 
 $(BUILD_DIR)/%.asm.rel: %.asm | $(BUILD_DIR)
 	@echo -e "\tcompiling $< ..."
-	@$(CROSS_CC) -c -o $@ $< $(CROSS_C_FLAGS)
+	@$(CROSS_AS) -l -s -o $@ $<
 
 $(BUILD_DIR)/$(TARGET).ihx: $(CROSS_OBJECTS)
 	@echo -e "\tlinking $@ ..."
