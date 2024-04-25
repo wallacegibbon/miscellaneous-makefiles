@@ -19,8 +19,9 @@ CROSS_GDB ?= "$(CROSS_COMPILER_PREFIX)gdb"
 BUILD_DIR ?= build
 TARGET ?= target
 
+## -MF"$(@:%.o=%.d)" is not necessary since `.c.d` is the default suffix in your current configuration.
 CROSS_C_FLAGS += $(ARCH) -Wall -Wextra -Wno-unused -g \
--ffunction-sections -fdata-sections -MMD -MP -MF"$(@:%.o=%.d)" \
+-ffunction-sections -fdata-sections -MMD -MP \
 $(addprefix -I, $(CROSS_C_INCLUDES))
 
 CROSS_LD_FLAGS += $(ARCH) -Wl,--gc-sections -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref
