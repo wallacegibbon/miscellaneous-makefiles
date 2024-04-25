@@ -7,5 +7,5 @@ TARGET = serialport-demo
 
 LD_FLAGS += -lserialport
 
-include ../miscellaneous-makefiles/simple-gcc-single.mk
+include ./simple-gcc-single.mk
 

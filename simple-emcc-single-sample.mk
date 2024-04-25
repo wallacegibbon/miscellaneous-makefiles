@@ -9,5 +9,5 @@ TARGET = serialport-demo-sdlv1
 C_FLAGS += $(shell sdl-config --cflags)
 LD_FLAGS += $(shell sdl-config --libs)
 
-include ../miscellaneous-makefiles/simple-emcc-single.mk
+include ./simple-emcc-single.mk
 

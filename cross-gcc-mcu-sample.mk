@@ -34,5 +34,5 @@ CROSS_C_INCLUDES = $(CH32_STD_LIB_DIR)/peripheral/inc $(CH32_STD_LIB_DIR)/core \
 
 OPENOCD_FLASH_COMMANDS = -c "program $< verify" -c wlink_reset_resume -c exit
 
-include ../miscellaneous-makefiles/cross-gcc-mcu.mk
+include ./cross-gcc-mcu.mk
 

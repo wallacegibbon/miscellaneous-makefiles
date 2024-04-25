@@ -10,5 +10,5 @@ C_INCLUDES = src lib/include
 
 LINKER_SCRIPTS = ./cmd/F28335_APP_FLASH.cmd ./cmd/newcmd.cmd
 
-include ../miscellaneous-makefiles/ti-c2000-mcu.mk
+include ./ti-c2000-mcu.mk
 
