@@ -5,7 +5,7 @@ CROSS_C_FLAGS += $(ARCH) -Wall -Wextra -Wno-unused -g -ffunction-sections -fdata
 -Wp,-MMD,-MT"$@",-MF"$(@:.o=.d)",-MP \
 $(addprefix -I, $(CROSS_C_INCLUDES))
 
-CROSS_LD_FLAGS += $(ARCH) -Wl,--gc-sections,-Map=$(BUILD_DIR)/$(TARGET).map,--cref
+CROSS_LD_FLAGS += $(ARCH) -Wl,--gc-sections,-Map=$@.map,--cref
 
 CROSS_CC = "$(CROSS_COMPILER_PREFIX)gcc"
 CROSS_OBJCOPY = "$(CROSS_COMPILER_PREFIX)objcopy"
