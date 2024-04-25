@@ -1,12 +1,6 @@
 OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(C_SOURCE_FILES:.c=.c.obj)))
 OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(ASM_SOURCE_FILES:.asm=.asm.obj)))
 
-CL2000 = "$(C2000_TOOL_ROOT)/bin/cl2000"
-HEX2000 = "$(C2000_TOOL_ROOT)/bin/hex2000"
-
-BUILD_DIR ?= build
-TARGET ?= target
-
 C_INCLUDES += $(C2000_TOOL_ROOT)/include
 
 C_FLAGS += $(ARCH) -Ooff --preproc_with_compile --abi=coffabi \
@@ -20,6 +14,12 @@ LINKER_FLAGS += $(ARCH) --diag_warning=225 --diag_wrap=off \
 -i$(C2000_TOOL_ROOT)/lib -i$(C2000_TOOL_ROOT)/include \
 --heap_size=0x400 --stack_size=0x400 \
 --warn_sections -m"$@.map" --rom_model -llibc.a \
+
+CL2000 = "$(C2000_TOOL_ROOT)/bin/cl2000"
+HEX2000 = "$(C2000_TOOL_ROOT)/bin/hex2000"
+
+BUILD_DIR ?= build
+TARGET ?= target
 
 vpath %.c $(sort $(dir $(C_SOURCE_FILES)))
 vpath %.asm $(sort $(dir $(ASM_SOURCE_FILES)))

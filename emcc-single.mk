@@ -1,8 +1,6 @@
 OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(C_SOURCE_FILES:.c=.c.o)))
 
-C_FLAGS += -Wall -Wextra -g \
--Wp,-MMD,-MT"$@",-MF"$(@:.o=.d)",-MP \
-$(addprefix -I, $(C_INCLUDES))
+C_FLAGS += $(addprefix -I, $(C_INCLUDES))
 
 LD_FLAGS +=
 
