@@ -1,12 +1,15 @@
 OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(C_SOURCE_FILES:.c=.c.o)))
 
+C_FLAGS += -Wall -Wextra -g \
+-Wp,-MMD,-MT"$@",-MF"$(@:.o=.d)",-MP \
+$(addprefix -I, $(C_INCLUDES))
+
+LD_FLAGS +=
+
 CC = emcc
 
 BUILD_DIR ?= build
 TARGET ?= target
-
-C_FLAGS += $(addprefix -I, $(C_INCLUDES)) -MMD -MP -MF"$(@:%.o=%.d)"
-LD_FLAGS +=
 
 vpath %.c $(sort $(dir $(C_SOURCE_FILES)))
 

@@ -2,7 +2,7 @@ CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_C_SOURCE_FILES:.c=.
 CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_ASM_SOURCE_FILES:.S=.S.o)))
 
 CROSS_C_FLAGS += $(ARCH) -Wall -Wextra -Wno-unused -g -ffunction-sections -fdata-sections \
--Wp,-MMD,-MT"$@",-MF"$(@:%.o=%.d)",-MP \
+-Wp,-MMD,-MT"$@",-MF"$(@:.o=.d)",-MP \
 $(addprefix -I, $(CROSS_C_INCLUDES))
 
 CROSS_LD_FLAGS += $(ARCH) -Wl,--gc-sections -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref
