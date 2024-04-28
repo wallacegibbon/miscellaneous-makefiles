@@ -1,7 +1,7 @@
 CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_C_SOURCE_FILES:.c=.c.rel)))
 CROSS_OBJECTS += $(addprefix $(BUILD_DIR)/, $(notdir $(CROSS_ASM_SOURCE_FILES:.asm=.asm.rel)))
 
-CROSS_C_FLAGS += -mmcs51 --disable-warning 283 \
+CROSS_C_FLAGS += -mmcs51 --stack-auto --disable-warning 283 \
 -Wp,-MMD,-MT"$@",-MF"$(@:%.rel=%.d)",-MP \
 $(addprefix -I, $(CROSS_C_INCLUDES))
 
