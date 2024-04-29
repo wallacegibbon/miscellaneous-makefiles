@@ -21,6 +21,9 @@ CROSS_C_SOURCE_FILES += $(wildcard ./src/*.c)
 
 CROSS_ASM_SOURCE_FILES += $(CH32_STD_LIB_DIR)/sample/startup.S
 
+CROSS_C_INCLUDES = $(CH32_STD_LIB_DIR)/peripheral/inc $(CH32_STD_LIB_DIR)/core \
+./screen-library-mcu/ch32v ./screen-library-mcu ./src \
+
 CROSS_C_FLAGS += -fno-common -fno-builtin -Os
 CROSS_C_FLAGS += -DCHIP_CH32V30X
 
@@ -28,9 +31,6 @@ CROSS_LD_FLAGS += -Wl,--no-relax -specs=nosys.specs -specs=nano.specs -nostartfi
 -T$(CH32_STD_LIB_DIR)/sample/default.ld
 
 #CROSS_LD_FLAGS += -lm
-
-CROSS_C_INCLUDES = $(CH32_STD_LIB_DIR)/peripheral/inc $(CH32_STD_LIB_DIR)/core \
-./screen-library-mcu/ch32v ./screen-library-mcu ./src \
 
 OPENOCD_FLASH_COMMANDS = -c "program $< verify" -c wlink_reset_resume -c exit
 

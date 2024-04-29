@@ -1,4 +1,5 @@
 C_SOURCE_FILES += $(wildcard ./src/*.c)
+
 C_INCLUDES += ./src ./include
 
 ## `sdl2-config --cflags`
