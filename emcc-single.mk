@@ -4,10 +4,10 @@ C_FLAGS += $(addprefix -I, $(C_INCLUDES))
 
 LD_FLAGS +=
 
-CC = emcc
-
 BUILD_DIR ?= build
 TARGET ?= target
+
+CC = emcc
 
 vpath %.c $(sort $(dir $(C_SOURCE_FILES)))
 

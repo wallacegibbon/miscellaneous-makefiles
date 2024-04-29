@@ -15,11 +15,11 @@ LINKER_FLAGS += $(ARCH) --diag_warning=225 --diag_wrap=off \
 --heap_size=0x400 --stack_size=0x400 \
 --warn_sections -m"$@.map" --rom_model -llibc.a \
 
-CL2000 = "$(C2000_TOOL_ROOT)/bin/cl2000"
-HEX2000 = "$(C2000_TOOL_ROOT)/bin/hex2000"
-
 BUILD_DIR ?= build
 TARGET ?= target
+
+CL2000 = "$(C2000_TOOL_ROOT)/bin/cl2000"
+HEX2000 = "$(C2000_TOOL_ROOT)/bin/hex2000"
 
 vpath %.c $(sort $(dir $(C_SOURCE_FILES)))
 vpath %.asm $(sort $(dir $(ASM_SOURCE_FILES)))
