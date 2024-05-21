@@ -12,8 +12,7 @@ ARCH = -march=rv32imafc -mabi=ilp32f
 #ARCH = -march=rv32imac -mabi=ilp32
 #ARCH = -march=rv32ec -mabi=ilp32e
 
-CH32_STD_LIB_DIR = ../ch32-standard-library/ch32v30x
-#CH32_STD_LIB_DIR = $(HOME)/playground/ch32-standard-library/ch32v30x
+CH32_STD_LIB_DIR = ../miscellaneous-periph-libraries/ch32v30x
 
 CROSS_C_SOURCE_FILES += $(wildcard $(CH32_STD_LIB_DIR)/peripheral/src/*.c)
 CROSS_C_SOURCE_FILES += $(wildcard $(CH32_STD_LIB_DIR)/core/*.c)
