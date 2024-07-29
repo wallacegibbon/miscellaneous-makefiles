@@ -10,11 +10,13 @@ ifeq ($(MEMCHECK), 1)
 C_FLAGS += -fno-inline -fno-omit-frame-pointer
 LD_FLAGS += -static-libgcc
 MEMORY_CHECK_PROG = drmemory --
+else ifeq ($(MEMCHECK), 2)
+MEMORY_CHECK_PROG = valgrind
 endif
 
 TARGET ?= target
 BUILD_DIR ?= build
-#INSTALL_DIR ?= /usr/local/lib
+#INSTALL_DIR ?= $(HOME)/lib
 INSTALL_DIR ?= C:/lib
 
 CC = cc
@@ -27,18 +29,19 @@ vpath %.c $(sort $(dir $(C_SOURCE_FILES)))
 all: $(OBJECTS)
 
 $(BUILD_DIR)/%.c.o: %.c | build_dir
-	@echo -e "\tCC $<"
+	@/bin/echo -e "\tCC $<"
 	@$(CC) -c -o $@ $< $(C_FLAGS)
 
 $(BUILD_DIR)/lib$(TARGET).a: $(OBJECTS)
-	@echo -e "\tAR $@"
+	@/bin/echo -e "\tAR $@"
 	@$(AR) -rcsv $@ $^
 
 install: $(BUILD_DIR)/lib$(TARGET).a
-	@mkdir -p $(INSTALL_DIR)/$(TARGET)/{lib,include}
-	@echo -e "\tCP include/* $(INSTALL_DIR)/$(TARGET)/include/"
+	@mkdir -p $(INSTALL_DIR)/$(TARGET)/lib
+	@mkdir -p $(INSTALL_DIR)/$(TARGET)/include
+	@/bin/echo -e "\tCP include/* $(INSTALL_DIR)/$(TARGET)/include/"
 	@cp -r include/* $(INSTALL_DIR)/$(TARGET)/include/
-	@echo -e "\tCP $(BUILD_DIR)/lib$(TARGET).a $(INSTALL_DIR)/$(TARGET)/lib/"
+	@/bin/echo -e "\tCP $(BUILD_DIR)/lib$(TARGET).a $(INSTALL_DIR)/$(TARGET)/lib/"
 	@cp $(BUILD_DIR)/lib$(TARGET).a $(INSTALL_DIR)/$(TARGET)/lib/
 
 build_dir:
@@ -50,10 +53,11 @@ clean:
 vpath %.c ./test
 
 $(BUILD_DIR)/%: %.c $(OBJECTS) | build_dir
-	@echo -e "\tCC $<"
+	@/bin/echo -e "\tCC $<"
 	@$(CC) -o $@ $^ $(C_FLAGS) $(LD_FLAGS)
-	@echo -e "\t./$@\n"
+	@/bin/echo -e "\t./$@\n"
 	@$(MEMORY_CHECK_PROG) $@
+	@rm $@
 
 -include $(OBJECTS:.o=.d)
 
