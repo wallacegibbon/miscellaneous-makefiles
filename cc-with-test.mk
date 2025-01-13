@@ -16,8 +16,7 @@ endif
 
 TARGET ?= target
 BUILD_DIR ?= build
-#INSTALL_DIR ?= $(HOME)/lib
-INSTALL_DIR ?= C:/lib
+INSTALL_DIR ?= $(HOME)/.local
 
 CC = cc
 AR = ar
@@ -37,12 +36,12 @@ $(BUILD_DIR)/lib$(TARGET).a: $(OBJECTS)
 	@$(AR) -rcsv $@ $^
 
 install: $(BUILD_DIR)/lib$(TARGET).a
-	@mkdir -p $(INSTALL_DIR)/$(TARGET)/lib
-	@mkdir -p $(INSTALL_DIR)/$(TARGET)/include
-	@/bin/echo -e "\tCP include/* $(INSTALL_DIR)/$(TARGET)/include/"
-	@cp -r include/* $(INSTALL_DIR)/$(TARGET)/include/
-	@/bin/echo -e "\tCP $(BUILD_DIR)/lib$(TARGET).a $(INSTALL_DIR)/$(TARGET)/lib/"
-	@cp $(BUILD_DIR)/lib$(TARGET).a $(INSTALL_DIR)/$(TARGET)/lib/
+	@mkdir -p $(INSTALL_DIR)/lib
+	@mkdir -p $(INSTALL_DIR)/include
+	@/bin/echo -e "\tCP include/* $(INSTALL_DIR)/include/"
+	@cp -r include/* $(INSTALL_DIR)/include/
+	@/bin/echo -e "\tCP $(BUILD_DIR)/lib$(TARGET).a $(INSTALL_DIR)/lib/"
+	@cp $(BUILD_DIR)/lib$(TARGET).a $(INSTALL_DIR)/lib/
 
 build_dir:
 	@mkdir -p $(BUILD_DIR)
