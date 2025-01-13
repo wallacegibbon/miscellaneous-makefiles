@@ -24,19 +24,19 @@ vpath %.asm $(sort $(dir $(CROSS_ASM_SOURCE_FILES)))
 all: $(BUILD_DIR)/$(TARGET).hex
 
 $(BUILD_DIR)/%.c.rel: %.c | $(BUILD_DIR)
-	@echo -e "\tCC $<"
+	@echo "CC $<"
 	@$(CROSS_CC) -c -o $@ $< $(CROSS_C_FLAGS)
 
 $(BUILD_DIR)/%.asm.rel: %.asm | $(BUILD_DIR)
-	@echo -e "\tAS $<"
+	@echo "AS $<"
 	@$(CROSS_AS) -l -s -o $@ $<
 
 $(BUILD_DIR)/$(TARGET).ihx: $(CROSS_OBJECTS)
-	@echo -e "\tLD $@"
+	@echo "LD $@"
 	@$(CROSS_CC) -o $@ $^ $(CROSS_LD_FLAGS)
 
 $(BUILD_DIR)/$(TARGET).hex: $(BUILD_DIR)/$(TARGET).ihx
-	@echo -e "\tPACKIHX $@"
+	@echo "PACKIHX $@"
 	@$(PACKIHX) $< > $@ 2> /dev/null
 
 $(BUILD_DIR):

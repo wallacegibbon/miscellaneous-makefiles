@@ -28,19 +28,19 @@ vpath %.c $(sort $(dir $(C_SOURCE_FILES)))
 all: $(OBJECTS)
 
 $(BUILD_DIR)/%.c.o: %.c | build_dir
-	@/bin/echo -e "\tCC $<"
+	@echo "CC $<"
 	@$(CC) -c -o $@ $< $(C_FLAGS)
 
 $(BUILD_DIR)/lib$(TARGET).a: $(OBJECTS)
-	@/bin/echo -e "\tAR $@"
+	@echo "AR $@"
 	@$(AR) -rcsv $@ $^
 
 install: $(BUILD_DIR)/lib$(TARGET).a
 	@mkdir -p $(INSTALL_DIR)/lib
 	@mkdir -p $(INSTALL_DIR)/include
-	@/bin/echo -e "\tCP include/* $(INSTALL_DIR)/include/"
+	@echo "CP include/* $(INSTALL_DIR)/include/"
 	@cp -r include/* $(INSTALL_DIR)/include/
-	@/bin/echo -e "\tCP $(BUILD_DIR)/lib$(TARGET).a $(INSTALL_DIR)/lib/"
+	@echo "CP $(BUILD_DIR)/lib$(TARGET).a $(INSTALL_DIR)/lib/"
 	@cp $(BUILD_DIR)/lib$(TARGET).a $(INSTALL_DIR)/lib/
 
 build_dir:
@@ -52,9 +52,9 @@ clean:
 vpath %.c ./test
 
 $(BUILD_DIR)/%: %.c $(OBJECTS) | build_dir
-	@/bin/echo -e "\tCC $<"
+	@echo "CC $<"
 	@$(CC) -o $@ $^ $(C_FLAGS) $(LD_FLAGS)
-	@/bin/echo -e "\t./$@\n"
+	@echo "./$@\n"
 	@$(MEMORY_CHECK_PROG) $@
 	@rm $@
 

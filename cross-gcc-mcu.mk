@@ -27,32 +27,32 @@ vpath %.S $(sort $(dir $(CROSS_ASM_SOURCE_FILES)))
 all: $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin target_detail
 
 $(BUILD_DIR)/%.c.o: %.c | $(BUILD_DIR)
-	@echo -e "\tCC $<"
+	@echo "CC $<"
 	@$(CROSS_CC) -c -o $@ $< $(CROSS_C_FLAGS)
 
 $(BUILD_DIR)/%.S.o: %.S | $(BUILD_DIR)
-	@echo -e "\tAS $<"
+	@echo "AS $<"
 	@$(CROSS_CC) -c -o $@ $< $(CROSS_C_FLAGS)
 
 $(BUILD_DIR)/$(TARGET).elf: $(CROSS_OBJECTS)
-	@echo -e "\tLD $@"
+	@echo "LD $@"
 	@$(CROSS_CC) -o $@ $^ $(CROSS_LD_FLAGS)
 
 $(BUILD_DIR)/$(TARGET).hex: $(BUILD_DIR)/$(TARGET).elf
-	@echo -e "\tOBJCOPY $@"
+	@echo "OBJCOPY $@"
 	@$(CROSS_OBJCOPY) -Oihex $< $@
 
 $(BUILD_DIR)/$(TARGET).bin: $(BUILD_DIR)/$(TARGET).elf
-	@echo -e "\tOBJCOPY $@"
+	@echo "OBJCOPY $@"
 	@$(CROSS_OBJCOPY) -Obinary $< $@
 
 $(BUILD_DIR):
 	mkdir $@
 
 target_detail: $(BUILD_DIR)/$(TARGET).elf
-	@echo -e "\tOBJDUMP of the target"
+	@echo "OBJDUMP of the target"
 	@$(CROSS_OBJDUMP) -S -D $< > $<.lss
-	@echo -e "\tSIZE of the target:"
+	@echo "SIZE of the target:"
 	@#$(CROSS_SIZE) --radix=16 --format=BSD $<
 	@$(CROSS_SIZE) --radix=16 --format=SysV $<
 
