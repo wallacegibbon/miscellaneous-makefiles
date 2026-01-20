@@ -46,4 +46,3 @@ clean:
 	@rm -rf $(BUILD_DIR)
 
 -include $(CROSS_OBJECTS:.rel=.d)
-

@@ -60,4 +60,3 @@ $(BUILD_DIR)/%: %.c $(OBJECTS) | build_dir
 	@rm $@
 
 -include $(OBJECTS:.o=.d)
-

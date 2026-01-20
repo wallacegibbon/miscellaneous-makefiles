@@ -13,4 +13,3 @@ LD_FLAGS += -LC:/lib/SDL2_image-2.8.2/x86_64-w64-mingw32/lib
 LD_FLAGS += -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -mwindows
 
 include ./cc-with-test.mk
-

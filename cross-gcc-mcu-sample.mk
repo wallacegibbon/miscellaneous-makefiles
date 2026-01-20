@@ -34,4 +34,3 @@ CROSS_LD_FLAGS += -Wl,--no-relax -specs=nosys.specs -specs=nano.specs -nostartfi
 OPENOCD_FLASH_COMMANDS = -c "program $< verify" -c wlink_reset_resume -c exit
 
 include ./cross-gcc-mcu.mk
-

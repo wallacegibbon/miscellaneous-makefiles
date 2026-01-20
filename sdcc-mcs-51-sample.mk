@@ -12,4 +12,3 @@ CROSS_LD_FLAGS += --iram-size 0x80 --xram-size 0x2000 --xram-loc 0x0100 --code-s
 #CROSS_LD_FLAGS += -lm
 
 include ./sdcc-mcs-51.mk
-

@@ -69,4 +69,3 @@ openocd:
 	$(OPENOCD) $(OPENOCD_ARGS)
 
 -include $(CROSS_OBJECTS:.o=.d)
-

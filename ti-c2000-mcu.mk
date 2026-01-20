@@ -50,4 +50,3 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 -include $(OBJECTS:.obj=.d)
-
